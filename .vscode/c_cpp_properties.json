@@ -1,0 +1,34 @@
+{
+    "configurations": [
+        {
+            "name": "Arduino AVR",
+            "includePath": [
+                "${workspaceFolder}\\**",
+                "${env:HOMEPATH}\\Documents\\Arduino\\libraries\\**",
+                "C:\\Program Files (x86)\\Arduino\\tools\\**",
+                "C:\\Program Files (x86)\\Arduino\\hardware\\arduino\\avr\\**",
+                "C:\\Program Files (x86)\\Arduino\\hardware\\tools\\avr\\lib\\gcc\\avr\\**",
+                "C:\\Program Files (x86)\\Arduino\\hardware\\tools\\avr\\avr\\include\\**",
+                "C:\\Program Files (x86)\\Arduino\\libraries\\**"
+            ],
+            "defines": [
+                "USBCON"
+            ],
+            "intelliSenseMode": "gcc-x64",
+            "compilerPath": "C:\\Program Files (x86)\\Arduino\\hardware\\tools\\avr\\bin\\avr-g++.exe",
+            "cStandard": "c11",
+            "cppStandard": "c++11"
+        },
+        {
+            "name": "Win32",
+            "includePath": [
+                "C:\\Users\\eric\\AppData\\Local\\Arduino15\\packages\\esp8266\\tools\\**",
+                "C:\\Users\\eric\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\2.6.3\\**",
+                "C:\\Program Files (x86)\\Arduino\\tools\\**",
+                "C:\\Program Files (x86)\\Arduino\\hardware\\arduino\\avr\\**"
+            ],
+            "forcedInclude": []
+        }
+    ],
+    "version": 4
+}
