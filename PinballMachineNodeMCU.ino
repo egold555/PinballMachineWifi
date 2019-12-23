@@ -1,7 +1,10 @@
 #include "NTPClient.h"
 #include <ESP8266WiFi.h>
 #include <WiFiUdp.h>
-#include <ESP8266WiFi.h>
+#include <WiFiClient.h>
+#include <ESP8266WiFiMulti.h> 
+#include <ESP8266mDNS.h>
+#include <ESP8266WebServer.h>   // Include the WebServer library
 
 const char *ssid = "EricDebug";
 const char *password = "debug1234";
@@ -12,7 +15,7 @@ const long utcOffsetInSeconds = -28800;
 WiFiUDP ntpUDP;
 NTPClient timeClient(ntpUDP, "pool.ntp.org", utcOffsetInSeconds);
 
-WiFiServer server(80);
+ESP8266WebServer server(80);
 
 void setup()
 {
@@ -45,6 +48,9 @@ void setup()
   Serial.print(WiFi.localIP());
   Serial.println("/");
 
+  server.on("/", handleRoot);               // Call the 'handleRoot' function when a client requests URI "/"
+  server.onNotFound(handleNotFound);        // When a client requests an unknown URI (i.e. something other than "/"), call 
+
   Serial.println("Time Client started");
   timeClient.begin();
 }
@@ -52,48 +58,14 @@ void setup()
 void loop()
 {
   timeClient.update();
+  server.handleClient();                    // Listen for HTTP requests from clients
+}
 
-  // Check if a client has connected
-  WiFiClient client = server.available();
-  if (!client)
-  {
-    return;
-  }
+void handleRoot() {
+  String data = timeClient.getFormattedDay() + "<br>" + timeClient.getFormattedTime12() + "<br>" + timeClient.getFormattedDate();
+  server.send(200, "text/html", data);   // Send HTTP status 200 (Ok) and send some text to the browser/client
+}
 
-  // Wait until the client sends some data
-  Serial.println("new client");
-  while (!client.available())
-  {
-    delay(1);
-  }
-
-  // Read the first line of the request
-  String request = client.readStringUntil('\r');
-  Serial.println(request);
-  client.flush();
-
-  // Return the response
-  client.println("HTTP/1.1 200 OK");
-  client.println("Content-Type: text/html");
-  client.println("Connection: close");
-  client.println(); //  do not forget this one
-  client.println("<!DOCTYPE HTML>");
-
-  client.println("<html>");
-  client.println("<head>");
-  client.println("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">");
-  client.println("<link rel=\"icon\" href=\"data:,\">");
-  client.println("</head>");
-  client.println("<body>");
-
-  client.print(timeClient.getFormattedDay() + "<br>");
-  client.print(timeClient.getFormattedTime12() + "<br>");
-  client.print(timeClient.getFormattedDate());
-
-  client.println("</body>");
-  client.println("</html>");
-
-  client.stop();
-  Serial.println("Client disonnected");
-  Serial.println("");
+void handleNotFound(){
+  server.send(404, "text/plain", "404: Not found"); // Send HTTP status 404 (Not Found) when there's no handler for the URI in the request
 }
