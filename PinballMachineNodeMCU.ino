@@ -48,7 +48,7 @@ void setup()
   Serial.print(WiFi.localIP());
   Serial.println("/");
 
-  server.on("/", handleRoot);               // Call the 'handleRoot' function when a client requests URI "/"
+  server.on("/", handlePinballTable);               // Call the 'handleRoot' function when a client requests URI "/"
   server.onNotFound(handleNotFound);        // When a client requests an unknown URI (i.e. something other than "/"), call 
 
   Serial.println("Time Client started");
@@ -63,6 +63,27 @@ void loop()
 
 void handleRoot() {
   String data = timeClient.getFormattedDay() + "<br>" + timeClient.getFormattedTime12() + "<br>" + timeClient.getFormattedDate();
+  server.send(200, "text/html", data);   // Send HTTP status 200 (Ok) and send some text to the browser/client
+}
+
+const String headerPinball = "<!DOCTYPE html><html lang=\"en\" ><head><meta charset=\"UTF-8\"><title>Pinball Highscores</title><style>table{font-family:arial,sans-serif;border-collapse:collapse;width:100%}td,th{border:1px solid #ddd;text-align:left;padding:8px}tr:nth-child(even){background-color:#ddd}</style></head><body><table><tr><th>Name</th><th>Score</th><th>Date</th></tr>";
+const String footerPinball = "</table></body></html>";
+
+String genRow(String name, int score, String fdt) {
+  return "<tr><td>" + name + "</td><td>" + score + "</td><td>" + fdt + "</td></tr>";
+}
+
+void handlePinballTable() {
+
+  String data = headerPinball;
+  data += genRow("Eric", 12345, timeClient.getFormattedDay() + " " + timeClient.getFormattedTime12() + " " + timeClient.getFormattedDate());
+  data += genRow("Joe", 54567, timeClient.getFormattedDay() + " " + timeClient.getFormattedTime12() + " " + timeClient.getFormattedDate());
+  data += genRow("Billy", 92384, timeClient.getFormattedDay() + " " + timeClient.getFormattedTime12() + " " + timeClient.getFormattedDate());
+  data += genRow("Pat", 0, timeClient.getFormattedDay() + " " + timeClient.getFormattedTime12() + " " + timeClient.getFormattedDate());
+  data += genRow("Hannah", 434, timeClient.getFormattedDay() + " " + timeClient.getFormattedTime12() + " " + timeClient.getFormattedDate());
+  data += genRow("Emma", 294, timeClient.getFormattedDay() + " " + timeClient.getFormattedTime12() + " " + timeClient.getFormattedDate());
+  data+= footerPinball;
+
   server.send(200, "text/html", data);   // Send HTTP status 200 (Ok) and send some text to the browser/client
 }
 
