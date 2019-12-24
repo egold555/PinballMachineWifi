@@ -28,6 +28,7 @@ void setup()
   Serial.println(ssid);
 
   WiFi.begin(ssid, password);
+  WiFi.mode(WIFI_STA); //no need to broadcast a wifi access point
 
   while (WiFi.status() != WL_CONNECTED)
   {
